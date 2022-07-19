@@ -21,9 +21,9 @@ module ExternalPosts
               path, { :site => site, :collection => site.collections['posts'] }
             )
             doc.data['external_source'] = src['name'];
-            doc.data['feed_content'] = e.content;
+            # doc.data['feed_content'] = e.content;
             doc.data['title'] = "#{e.title}";
-            doc.data['description'] = e.summary;
+            # doc.data['description'] = e.summary;
             doc.data['date'] = e.published;
             doc.data['redirect'] = e.url;
             site.collections['posts'].docs << doc
