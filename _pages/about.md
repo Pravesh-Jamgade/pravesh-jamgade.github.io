@@ -6,13 +6,13 @@ subtitle: <a href='#'>PhD Student</a>. IIT Ropar.
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: prof_pic.png
   image_cicular: false # crops the image to make it circular
   address: >
-    <p>Research Lab 208, </p>
-    <p>Ramanujan Block,</p>
-    <p>Computer Science & Engineering Department,</p>
-    <p>IIT Ropar, Punjab</p>
+    <p>Lab 208, </p>
+    <p>S. Ramanujan Block,</p>
+    <p>CSE Department,</p>
+    <p>IIT Ropar, Punjab, 140001.</p>
 
 #news: true  # includes a list of news items
 #selected_papers: true # includes a list of papers marked as "selected={true}"
