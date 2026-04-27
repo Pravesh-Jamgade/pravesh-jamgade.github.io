@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Admin - Manage Posts</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Blog Admin</h1>
+            <nav>
+                <a href="index.html">← Back to Blog</a>
+                <a href="#" id="help-btn" class="help-link">❓ Help</a>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <div class="admin-controls">
+                <button id="new-post-btn" class="btn btn-primary">+ New Post</button>
+                <button id="export-btn" class="btn btn-secondary">⬇️ Export Posts</button>
+                <button id="import-btn" class="btn btn-secondary">⬆️ Import Posts</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+
+            <div id="posts-manager" class="posts-manager">
+                <h2>Your Posts</h2>
+                <div id="posts-list-admin" class="posts-list-admin">
+                    <p>Loading posts...</p>
+                </div>
+            </div>
+
+            <div id="editor-section" class="editor-section" style="display: none;">
+                <h2 id="editor-title">New Post</h2>
+                <form id="post-form">
+                    <div class="form-group">
+                        <label for="post-title">Post Title *</label>
+                        <input type="text" id="post-title" required placeholder="Enter post title">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="post-date">Date *</label>
+                            <input type="date" id="post-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-category">Category *</label>
+                            <input type="text" id="post-category" required placeholder="e.g., Research, Methods">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-excerpt">Excerpt (Summary) *</label>
+                        <textarea id="post-excerpt" required placeholder="Short preview text for blog list" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-content">Post Content (Markdown) *</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="toolbar-btn" data-format="**bold**" title="Bold">
+                                <strong>B</strong>
+                            </button>
+                            <button type="button" class="toolbar-btn" data-format="*italic*" title="Italic">
+                                <em>I</em>
+                            </button>
+                            <button type="button" class="toolbar-btn" data-format="# Heading" title="Heading">
+                                H1
+                            </button>
+                            <button type="button" class="toolbar-btn" data-format="- " title="Bullet list">
+                                • List
+                            </button>
+                            <button type="button" class="toolbar-btn" id="insert-image-btn" title="Insert image">
+                                🖼️ Image
+                            </button>
+                            <button type="button" class="toolbar-btn" id="preview-btn" title="Preview">
+                                👁️ Preview
+                            </button>
+                        </div>
+                        <textarea id="post-content" required placeholder="Write your post here. Use markdown formatting." rows="12"></textarea>
+                        <div id="preview-area" class="preview-area" style="display: none;">
+                            <h3>Preview</h3>
+                            <div id="preview-content"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-images">Attached Images</label>
+                        <div id="images-list" class="images-list"></div>
+                        <input type="file" id="post-images" multiple accept="image/*" class="image-input">
+                        <small>Click to select images. They'll be embedded in your post.</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Post</button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Research Blog Admin</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>

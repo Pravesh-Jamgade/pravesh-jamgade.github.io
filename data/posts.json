@@ -1,0 +1,26 @@
+[
+  {
+    "id": "getting-started",
+    "title": "Getting Started with My Research",
+    "date": "2026-04-25",
+    "category": "General",
+    "excerpt": "Welcome to my research blog! In this post, I'll discuss the motivation behind my PhD research and what I hope to accomplish.",
+    "filename": "getting-started.md"
+  },
+  {
+    "id": "literature-review-insights",
+    "title": "Key Insights from My Literature Review",
+    "date": "2026-04-20",
+    "category": "Research",
+    "excerpt": "Summarizing important themes and gaps I've identified while reviewing recent literature in my field.",
+    "filename": "literature-review-insights.md"
+  },
+  {
+    "id": "methodology-deep-dive",
+    "title": "Understanding My Research Methodology",
+    "date": "2026-04-15",
+    "category": "Methods",
+    "excerpt": "A detailed explanation of the methodological approach I'm taking in my research.",
+    "filename": "methodology-deep-dive.md"
+  }
+]
