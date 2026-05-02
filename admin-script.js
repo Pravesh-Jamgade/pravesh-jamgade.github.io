@@ -1,6 +1,7 @@
 // Admin Panel Script - Markdown File Based
 const POSTS_META_KEY = 'blog_posts_meta';
 const POST_VIEWS_KEY = 'blog_post_views';
+const VISITOR_LOG_KEY = 'blog_visitor_log';
 let currentEditingId = null;
 let postsMeta = {};
 
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDateInput();
     loadPostsList();
     setupEventListeners();
+    displayVisitorLog();
 });
 
 function initializeDateInput() {
