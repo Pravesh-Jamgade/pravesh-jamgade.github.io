@@ -364,23 +364,3 @@ function getPostViews(postId) {
     const views = JSON.parse(localStorage.getItem(POST_VIEWS_KEY) || '{}');
     return views[postId] || 0;
 }
-
-
-function displayVisitorLog() {
-    const listContainer = document.getElementById('visitor-list-admin');
-    if (!listContainer) return;
-
-    const logs = JSON.parse(localStorage.getItem(VISITOR_LOG_KEY) || '[]');
-    if (!logs.length) {
-        listContainer.innerHTML = '<p>No visitor data yet.</p>';
-        return;
-    }
-
-    listContainer.innerHTML = logs.slice(0, 50).map(log => `
-        <div class="visitor-row">
-            <span>${new Date(log.time).toLocaleString()}</span>
-            <span>${log.postTitle || log.postId}</span>
-            <span>${log.city}, ${log.region}, ${log.country}</span>
-        </div>
-    `).join('');
-}
