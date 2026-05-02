@@ -1,5 +1,6 @@
 // Admin Panel Script - Markdown File Based
 const POSTS_META_KEY = 'blog_posts_meta';
+const POST_VIEWS_KEY = 'blog_post_views';
 let currentEditingId = null;
 let postsMeta = {};
 
@@ -257,14 +258,14 @@ function displayPostsList() {
     }
 
     listContainer.innerHTML = posts.map(post => `
-        <div class="post-card">
-            <h3>${post.title}</h3>
-            <div class="post-card-meta">
-                <span>📅 ${post.date}</span>
-                <span>🏷️ ${post.category}</span>
-                <span>📄 ${post.filename}</span>
+        <div class="post-row">
+            <div class="post-row-main">
+                <strong>${post.title}</strong>
+                <span>${post.date}</span>
+                <span>${getPostViews(post.id)} views</span>
+                <span>${post.category}</span>
             </div>
-            <div class="post-card-actions">
+            <div class="post-row-actions">
                 <button class="btn btn-secondary btn-small" onclick="editPost('${post.id}')">Edit</button>
                 <button class="btn btn-danger btn-small" onclick="deletePost('${post.id}')">Delete</button>
             </div>
@@ -354,4 +355,10 @@ The system stores:
 - Content in posts/*.md files
 - Images in images/ folder
 `);
+}
+
+
+function getPostViews(postId) {
+    const views = JSON.parse(localStorage.getItem(POST_VIEWS_KEY) || '{}');
+    return views[postId] || 0;
 }
