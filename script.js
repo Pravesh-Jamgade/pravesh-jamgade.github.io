@@ -1,4 +1,6 @@
 const POSTS_META_KEY = 'blog_posts_meta';
+const POST_VIEWS_KEY = 'blog_post_views';
+const VISITOR_LOG_KEY = 'blog_visitor_log';
 
 // Load and display blog posts list
 async function loadBlogList() {
@@ -8,21 +10,23 @@ async function loadBlogList() {
         const postsList = document.getElementById('posts-list');
 
         if (posts.length === 0) {
-            postsList.innerHTML = '<p>No posts yet. <a href="admin.html">Create your first post</a>!</p>';
+            postsList.innerHTML = '<p>No posts published yet.</p>';
             return;
         }
 
-        const postsHTML = posts.map(post => `
+        const postsHTML = posts.map(post => {
+            const views = getPostViews(post.id);
+            return `
             <div class="blog-item">
-                <h2><a href="post.html?id=${post.id}">${post.title}</a></h2>
-                <div class="blog-meta">
-                    <span>📅 ${formatDate(post.date)}</span>
-                    <span>🏷️ ${post.category}</span>
-                </div>
-                <p class="blog-excerpt">${post.excerpt}</p>
-                <a href="post.html?id=${post.id}" class="read-more">Read More →</a>
+                <a href="post.html?id=${post.id}" class="blog-line">
+                    <span class="line-title">${post.title}</span>
+                    <span>${formatDate(post.date)}</span>
+                    <span>${views} views</span>
+                    <span>${post.category}</span>
+                </a>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         postsList.innerHTML = `<div class="blog-list">${postsHTML}</div>`;
     } catch (error) {
@@ -49,6 +53,9 @@ async function loadPost() {
             document.getElementById('post-content').innerHTML = '<p>Post not found.</p>';
             return;
         }
+
+        incrementPostViews(post.id);
+        trackVisitor(post);
 
         document.title = post.title + ' - Research Blog';
 
@@ -77,8 +84,7 @@ async function loadPost() {
         } catch (error) {
             console.error('Error loading post file:', error);
             document.getElementById('post-content').innerHTML = `
-                <p>Post content not found. The markdown file may not be committed to the repository yet.</p>
-                <p><a href="admin.html">Go to admin panel</a> to manage posts.</p>
+                <p>Post content not found. The markdown file may not be available yet.</p>
             `;
         }
     } catch (error) {
@@ -111,4 +117,49 @@ async function loadPostsMetadata() {
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+
+function getViewsMap() {
+    return JSON.parse(localStorage.getItem(POST_VIEWS_KEY) || '{}');
+}
+
+function getPostViews(postId) {
+    return getViewsMap()[postId] || 0;
+}
+
+function incrementPostViews(postId) {
+    const viewMap = getViewsMap();
+    viewMap[postId] = (viewMap[postId] || 0) + 1;
+    localStorage.setItem(POST_VIEWS_KEY, JSON.stringify(viewMap));
+}
+
+
+async function trackVisitor(post) {
+    const location = await getVisitorLocation();
+    const logs = JSON.parse(localStorage.getItem(VISITOR_LOG_KEY) || '[]');
+    logs.unshift({
+        time: new Date().toISOString(),
+        postId: post.id,
+        postTitle: post.title,
+        city: location.city,
+        region: location.region,
+        country: location.country
+    });
+    localStorage.setItem(VISITOR_LOG_KEY, JSON.stringify(logs.slice(0, 200)));
+}
+
+async function getVisitorLocation() {
+    try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error('Location lookup failed');
+        const data = await response.json();
+        return {
+            city: data.city || 'Unknown city',
+            region: data.region || 'Unknown region',
+            country: data.country_name || 'Unknown country'
+        };
+    } catch (error) {
+        return { city: 'Unknown city', region: 'Unknown region', country: 'Unknown country' };
+    }
 }
