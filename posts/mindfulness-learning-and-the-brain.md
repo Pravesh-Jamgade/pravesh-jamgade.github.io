@@ -1,5 +1,3 @@
-# Mindfulness, learning and the brain
-
 Author: Guy Claxton, University of Bristol, UK
 I have tried to sketch an approach to the complex phenomenon that go by the name of ‘mindfulness’ that both does justice to this complexity and depth and also offers a way of thinking about mindfulness in evolutionary, and neural terms: terms that enable us to ask questions like: where did mindfulness come from ? What kind of consciousness is it ? What was I for, before it was co-opted by spiritual and therapeutic kinds of discourse and practice ? And how do brains do it ? In essence, I am suggesting that human brains seem to have developed, for good evolutionary reasons, a degree of facility with imaginative empathy and as-if identification; and that mindfulness capitalizes on this to create what is probably a uniquely human form of learning-or rather unlearning.
 
