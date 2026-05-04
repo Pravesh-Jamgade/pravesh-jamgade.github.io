@@ -1,20 +1,28 @@
 const POSTS_META_KEY = 'blog_posts_meta';
+const POSTS_META_CACHE_KEY = 'blog_posts_meta_cache';
+const POSTS_SYNC_TS_KEY = 'blog_posts_meta_sync_ts';
 const POST_VIEWS_KEY = 'blog_post_views';
 const VISITOR_LOG_KEY = 'blog_visitor_log';
+const LOCATION_ACCESS_KEY = 'blog_location_access';
+const POST_AVAILABILITY_KEY = 'blog_post_availability';
+
+const POSTS_SYNC_INTERVAL_MS = 5 * 60 * 1000;
+const AVAILABILITY_CHECK_INTERVAL_MS = 12 * 60 * 60 * 1000;
 
 // Load and display blog posts list
 async function loadBlogList() {
     try {
-        let posts = await loadPostsMetadata();
+        const posts = await loadPostsMetadata();
+        const availablePosts = await filterAvailablePosts(posts);
 
         const postsList = document.getElementById('posts-list');
 
-        if (posts.length === 0) {
+        if (availablePosts.length === 0) {
             postsList.innerHTML = '<p>No posts published yet.</p>';
             return;
         }
 
-        const postsHTML = posts.map(post => {
+        const postsHTML = availablePosts.map(post => {
             const views = getPostViews(post.id);
             return `
             <div class="blog-item">
@@ -46,7 +54,7 @@ async function loadPost() {
             return;
         }
 
-        let posts = await loadPostsMetadata();
+        const posts = await loadPostsMetadata();
         const post = posts.find(p => p.id === postId);
 
         if (!post) {
@@ -55,7 +63,7 @@ async function loadPost() {
         }
 
         incrementPostViews(post.id);
-        trackVisitor(post);
+        await trackVisitor(post);
 
         document.title = post.title + ' - Research Blog';
 
@@ -93,23 +101,87 @@ async function loadPost() {
     }
 }
 
-// Load posts metadata from localStorage or JSON
+// Load posts metadata with local caching + periodic auto refresh from JSON
 async function loadPostsMetadata() {
-    // Try localStorage first
-    const stored = localStorage.getItem(POSTS_META_KEY);
-    if (stored) {
-        return JSON.parse(stored);
+    const stored = parseJSON(localStorage.getItem(POSTS_META_KEY), []);
+    const lastSyncAt = Number(localStorage.getItem(POSTS_SYNC_TS_KEY) || 0);
+    const shouldSync = Date.now() - lastSyncAt > POSTS_SYNC_INTERVAL_MS || stored.length === 0;
+
+    if (!shouldSync) {
+        return stored;
     }
 
-    // Load from data/posts.json
     try {
-        const response = await fetch('data/posts.json');
-        const posts = await response.json();
-        localStorage.setItem(POSTS_META_KEY, JSON.stringify(posts));
-        return posts;
+        const response = await fetch(`data/posts.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Unable to load posts metadata');
+
+        const fetchedPosts = await response.json();
+        if (!Array.isArray(fetchedPosts)) throw new Error('Invalid posts metadata format');
+
+        const normalizedPosts = normalizePosts(fetchedPosts);
+        const cachedHash = localStorage.getItem(POSTS_META_CACHE_KEY);
+        const newHash = createPostsHash(normalizedPosts);
+
+        if (cachedHash !== newHash) {
+            localStorage.setItem(POSTS_META_KEY, JSON.stringify(normalizedPosts));
+            localStorage.setItem(POSTS_META_CACHE_KEY, newHash);
+        }
+
+        localStorage.setItem(POSTS_SYNC_TS_KEY, String(Date.now()));
+        return normalizePosts(parseJSON(localStorage.getItem(POSTS_META_KEY), normalizedPosts));
     } catch (error) {
-        console.error('Error loading posts metadata:', error);
-        return [];
+        console.error('Error syncing posts metadata:', error);
+        return normalizePosts(stored);
+    }
+}
+
+function normalizePosts(posts) {
+    return [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function createPostsHash(posts) {
+    return JSON.stringify(posts.map(({ id, title, filename, date }) => ({ id, title, filename, date })));
+}
+
+async function filterAvailablePosts(posts) {
+    const availabilityMap = parseJSON(localStorage.getItem(POST_AVAILABILITY_KEY), {});
+    const now = Date.now();
+    const updates = {};
+
+    const checks = posts.map(async (post) => {
+        const cached = availabilityMap[post.id];
+        if (cached && now - cached.checkedAt < AVAILABILITY_CHECK_INTERVAL_MS) {
+            return { post, available: cached.available };
+        }
+
+        const available = await isPostAvailable(post.filename);
+        updates[post.id] = { available, checkedAt: now };
+        return { post, available };
+    });
+
+    const results = await Promise.all(checks);
+
+    if (Object.keys(updates).length > 0) {
+        localStorage.setItem(POST_AVAILABILITY_KEY, JSON.stringify({ ...availabilityMap, ...updates }));
+    }
+
+    return results.filter(r => r.available).map(r => r.post);
+}
+
+async function isPostAvailable(filename) {
+    try {
+        const response = await fetch(`posts/${filename}`, { method: 'HEAD', cache: 'no-store' });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
+
+function parseJSON(raw, fallback) {
+    try {
+        return raw ? JSON.parse(raw) : fallback;
+    } catch {
+        return fallback;
     }
 }
 
@@ -119,9 +191,8 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-
 function getViewsMap() {
-    return JSON.parse(localStorage.getItem(POST_VIEWS_KEY) || '{}');
+    return parseJSON(localStorage.getItem(POST_VIEWS_KEY), {});
 }
 
 function getPostViews(postId) {
@@ -134,10 +205,31 @@ function incrementPostViews(postId) {
     localStorage.setItem(POST_VIEWS_KEY, JSON.stringify(viewMap));
 }
 
+function getLocationAccessMap() {
+    return parseJSON(localStorage.getItem(LOCATION_ACCESS_KEY), {});
+}
+
+function updateLocationAccess(post, location) {
+    const map = getLocationAccessMap();
+    const postBucket = map[post.id] || {
+        postTitle: post.title,
+        total: 0,
+        locations: {}
+    };
+
+    const locationKey = [location.city, location.region, location.country].join(', ');
+
+    postBucket.total += 1;
+    postBucket.locations[locationKey] = (postBucket.locations[locationKey] || 0) + 1;
+
+    map[post.id] = postBucket;
+    localStorage.setItem(LOCATION_ACCESS_KEY, JSON.stringify(map));
+}
 
 async function trackVisitor(post) {
     const location = await getVisitorLocation();
-    const logs = JSON.parse(localStorage.getItem(VISITOR_LOG_KEY) || '[]');
+    const logs = parseJSON(localStorage.getItem(VISITOR_LOG_KEY), []);
+
     logs.unshift({
         time: new Date().toISOString(),
         postId: post.id,
@@ -146,7 +238,9 @@ async function trackVisitor(post) {
         region: location.region,
         country: location.country
     });
+
     localStorage.setItem(VISITOR_LOG_KEY, JSON.stringify(logs.slice(0, 200)));
+    updateLocationAccess(post, location);
 }
 
 async function getVisitorLocation() {
