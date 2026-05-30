@@ -198,6 +198,15 @@ git push -u origin main
 ## Troubleshooting
 
 ### Posts not showing up
+
+If you add or update files in the `posts/` folder, the repository will automatically regenerate `data/posts.json` using a GitHub Action. The action runs on pushes to `posts/**` and commits an updated `data/posts.json` back to the repository. No manual edit of `data/posts.json` is required after pushing new `.md` files.
+
+To regenerate locally, run:
+
+```bash
+python3 scripts/generate_posts_meta.py
+```
+
 - Check that `data/posts.json` has valid JSON syntax
 - Verify `.md` files are in the `posts/` folder
 - Clear browser cache and reload

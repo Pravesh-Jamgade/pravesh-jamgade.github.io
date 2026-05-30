@@ -154,14 +154,21 @@ function savePost(event) {
 
     postsMeta[postMeta.id] = postMeta;
 
-    // Save metadata
-    localStorage.setItem(POSTS_META_KEY, JSON.stringify(Object.values(postsMeta)));
+    // Persist metadata to localStorage (sorted newest first)
+    const postsArray = Object.values(postsMeta).sort((a, b) => new Date(b.date) - new Date(a.date));
+    localStorage.setItem(POSTS_META_KEY, JSON.stringify(postsArray));
 
     // Provide markdown file content for download
     const markdownContent = `# ${title}\n\n${content}`;
     downloadFile(markdownContent, filename);
 
-    alert(`Post saved!\n\nMarkdown file: ${filename}\n\nInstructions:\n1. The markdown content has been provided\n2. Create a new file in the 'posts' folder named '${filename}'\n3. Copy the content from the download\n4. Commit and push to GitHub\n\nOr use the preview below to copy the markdown directly.`);
+    // Also prepare an updated posts metadata JSON for the repository.
+    // This downloads a file named 'data-posts.json' — replace your repository's
+    // `data/posts.json` with this file (rename when saving) and commit.
+    const postsJsonContent = JSON.stringify(postsArray, null, 2);
+    downloadFile(postsJsonContent, 'data-posts.json');
+
+    alert(`Post saved!\n\nFiles downloaded:\n- ${filename} (markdown)\n- data-posts.json (updated metadata)\n\nNext steps:\n1. Move '${filename}' into the 'posts' folder in your repo.\n2. Replace 'data/posts.json' with the downloaded 'data-posts.json' file (rename to data/posts.json).\n3. Commit and push to GitHub.`);
 
     hideEditor();
     loadPostsList();

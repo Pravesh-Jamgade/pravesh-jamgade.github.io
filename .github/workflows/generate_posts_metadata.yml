@@ -1,0 +1,31 @@
+name: Generate Posts Metadata
+
+on:
+  push:
+    paths:
+      - 'posts/**'
+  workflow_dispatch: {}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run posts metadata generator
+        run: python3 scripts/generate_posts_meta.py
+
+      - name: Commit updated metadata
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: github-actions[bot]
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: 'chore: regenerate data/posts.json'
+          add: 'data/posts.json'
+          push: 'true'
