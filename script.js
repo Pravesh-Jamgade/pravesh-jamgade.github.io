@@ -103,13 +103,9 @@ async function loadPost() {
 
 // Load posts metadata with local caching + periodic auto refresh from JSON
 async function loadPostsMetadata() {
+    // Always attempt to fetch fresh metadata from the server (bypass caches).
+    // If the fetch fails, fall back to localStorage so cached clients still work.
     const stored = parseJSON(localStorage.getItem(POSTS_META_KEY), []);
-    const lastSyncAt = Number(localStorage.getItem(POSTS_SYNC_TS_KEY) || 0);
-    const shouldSync = Date.now() - lastSyncAt > POSTS_SYNC_INTERVAL_MS || stored.length === 0;
-
-    if (!shouldSync) {
-        return stored;
-    }
 
     try {
         const response = await fetch(`data/posts.json?t=${Date.now()}`, { cache: 'no-store' });
@@ -128,9 +124,10 @@ async function loadPostsMetadata() {
         }
 
         localStorage.setItem(POSTS_SYNC_TS_KEY, String(Date.now()));
-        return normalizePosts(parseJSON(localStorage.getItem(POSTS_META_KEY), normalizedPosts));
+        return normalizedPosts;
     } catch (error) {
-        console.error('Error syncing posts metadata:', error);
+        // Network or server error — fall back to whatever we have in localStorage.
+        console.warn('Could not fetch fresh posts metadata, using cached copy:', error);
         return normalizePosts(stored);
     }
 }
