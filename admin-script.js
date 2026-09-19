@@ -1,7 +1,5 @@
 // Admin Panel Script - Markdown File Based
 const POSTS_META_KEY = 'blog_posts_meta';
-const POST_VIEWS_KEY = 'blog_post_views';
-const VISITOR_LOG_KEY = 'blog_visitor_log';
 let currentEditingId = null;
 let postsMeta = {};
 
@@ -10,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDateInput();
     loadPostsList();
     setupEventListeners();
-    displayVisitorLog();
 });
 
 function initializeDateInput() {
@@ -271,7 +268,6 @@ function displayPostsList() {
             <div class="post-row-main">
                 <strong>${post.title}</strong>
                 <span>${post.date}</span>
-                <span>${getPostViews(post.id)} views</span>
                 <span>${post.category}</span>
             </div>
             <div class="post-row-actions">
@@ -364,10 +360,4 @@ The system stores:
 - Content in posts/*.md files
 - Images in images/ folder
 `);
-}
-
-
-function getPostViews(postId) {
-    const views = JSON.parse(localStorage.getItem(POST_VIEWS_KEY) || '{}');
-    return views[postId] || 0;
 }

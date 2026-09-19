@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research Blog</title>
+    <title>Pravesh Jamgade — Notes on systems and the mind</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Research Blog</h1>
-            <p class="tagline">Thoughts on research and academia</p>
-            <nav>
+        <header class="site-header">
+            <a class="site-name" href="index.html" aria-label="Pravesh Jamgade, home">PJ<span>.</span></a>
+            <nav aria-label="Primary navigation">
                 <a href="index.html" class="active">Blog</a>
                 <a href="about.html">About</a>
             </nav>
         </header>
 
         <main>
+            <section class="intro" aria-labelledby="intro-title">
+                <p class="eyebrow">Research notes &amp; reflections</p>
+                <h1 id="intro-title">Exploring the architecture of machines—and the mind.</h1>
+                <p>I write about computer architecture, virtual memory, research, and the ideas I meet along the way.</p>
+            </section>
+            <div class="section-heading">
+                <h2>Writing</h2>
+                <span>Latest first</span>
+            </div>
             <div id="posts-list"></div>
         </main>
 
         <footer>
-            <p>&copy; 2026 PhD Researcher. All rights reserved.</p>
+            <p>&copy; 2026 Pravesh Jamgade</p>
         </footer>
     </div>
 

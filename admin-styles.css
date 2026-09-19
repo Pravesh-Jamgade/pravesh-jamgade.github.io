@@ -6,7 +6,7 @@
 .posts-manager { border: 1px solid #ddd; padding: 12px; margin-bottom: 18px; }
 .posts-list-admin { display: flex; flex-direction: column; }
 .post-row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid #e6e6e6; padding: 8px 0; align-items: center; }
-.post-row-main { display: grid; grid-template-columns: minmax(200px,2fr) 1fr 1fr 1fr; gap: 10px; width: 100%; font-size: 0.92rem; }
+.post-row-main { display: grid; grid-template-columns: minmax(200px,2fr) 1fr 1fr; gap: 10px; width: 100%; font-size: 0.92rem; }
 .post-row-actions { display: flex; gap: 6px; }
 .editor-section { border: 1px solid #ddd; padding: 14px; margin-bottom: 18px; }
 .form-group { margin-bottom: 14px; }
@@ -22,6 +22,7 @@
   .post-row-main { grid-template-columns: 1fr; gap: 2px; }
 }
 
-.visitor-list-admin { display: flex; flex-direction: column; }
-.visitor-row { display: grid; grid-template-columns: 1.2fr 1.2fr 2fr; gap: 10px; border-bottom: 1px solid #e6e6e6; padding: 8px 0; font-size: 0.9rem; }
-@media (max-width: 700px) { .visitor-row { grid-template-columns: 1fr; gap: 2px; } }
+.analytics-card { align-items: center; display: flex; gap: 24px; justify-content: space-between; }
+.analytics-card p { color: var(--muted); max-width: 650px; }
+.analytics-card .analytics-label { color: var(--accent); font-family: "DM Mono", monospace; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; }
+@media (max-width: 700px) { .analytics-card { align-items: flex-start; flex-direction: column; } }
