@@ -11,6 +11,11 @@ A simple, clean blogging site for PhD researchers. Designed to be easy to mainta
 - 📝 Posts stored as simple text files (.md)
 - 🏷️ Category tags for organizing posts
 - 📄 Auto-formatting for paragraphs and line breaks
+- 🔒 Private, account-protected viewership analytics setup
+
+## Private Analytics
+
+Public pages do not display view counts or collect visitor locations. For accurate site-wide metrics visible only to authorized administrators, follow the Cloudflare Web Analytics setup in [`ANALYTICS.md`](ANALYTICS.md). Do not use browser `localStorage` for viewership: it is isolated to each visitor's device and cannot produce a shared admin report.
 
 ## How It Works
 
@@ -276,4 +281,3 @@ And links:
 **Happy blogging!** 📚✍️
 
 For the latest updates, visit the [repository](https://github.com).
-
