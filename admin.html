@@ -9,19 +9,37 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📝 Blog Admin</h1>
+        <header class="site-header">
+            <a class="site-name" href="index.html">PJ<span>.</span> / Admin</a>
             <nav>
-                <a href="index.html">← Back to Blog</a>
-                <a href="#" id="help-btn" class="help-link">❓ Help</a>
+                <a href="index.html">← Blog</a>
+                <a href="#" id="help-btn" class="help-link">Help</a>
             </nav>
         </header>
 
         <main class="admin-main">
             <div class="admin-controls">
-                <button id="new-post-btn" class="btn btn-primary">+ New Post</button>
-                <button id="export-btn" class="btn btn-secondary">⬇️ Export Posts</button>
-                <button id="import-btn" class="btn btn-secondary">⬆️ Import Posts</button>
+                <div>
+                    <p class="eyebrow">Publisher</p>
+                    <h1>Write, preview, publish.</h1>
+                </div>
+                <button id="new-post-btn" class="btn btn-primary">+ New post</button>
+            </div>
+
+            <details class="publish-settings">
+                <summary>GitHub publishing settings</summary>
+                <p>Use a fine-grained token with Contents read/write access. It stays in this browser tab and is never added to the site.</p>
+                <div class="settings-grid">
+                    <label>Owner<input id="github-owner" type="text" autocomplete="off" placeholder="username"></label>
+                    <label>Repository<input id="github-repo" type="text" autocomplete="off" placeholder="username.github.io"></label>
+                    <label>Branch<input id="github-branch" type="text" value="main" autocomplete="off"></label>
+                    <label>Access token<input id="github-token" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+                </div>
+            </details>
+
+            <div class="admin-tools">
+                <button id="export-btn" class="text-button">Export backup</button>
+                <button id="import-btn" class="text-button">Import backup</button>
                 <input type="file" id="import-file" accept=".json" style="display: none;">
             </div>
 
@@ -103,9 +121,10 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Save Post</button>
+                        <button type="submit" class="btn btn-primary" id="publish-btn">Publish post</button>
                         <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
                     </div>
+                    <p id="publish-status" class="publish-status" role="status" aria-live="polite"></p>
                 </form>
             </div>
         </main>

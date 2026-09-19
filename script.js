@@ -14,6 +14,9 @@ async function loadBlogList() {
 
         const postsList = document.getElementById('posts-list');
 
+        const count = document.getElementById('post-count');
+        if (count) count.textContent = `${availablePosts.length} ${availablePosts.length === 1 ? 'note' : 'notes'}`;
+
         if (availablePosts.length === 0) {
             postsList.innerHTML = '<p>No posts published yet.</p>';
             return;
@@ -25,7 +28,6 @@ async function loadBlogList() {
                     <span class="line-title">${post.title}</span>
                     <span class="line-category">${post.category}</span>
                     <time datetime="${post.date}">${formatDate(post.date)}</time>
-                    <span class="line-arrow" aria-hidden="true">↗</span>
                 </a>
             </div>
         `).join('');
