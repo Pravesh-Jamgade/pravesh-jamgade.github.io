@@ -6,9 +6,21 @@ let postsMeta = {};
 // Initialize admin panel
 document.addEventListener('DOMContentLoaded', function() {
     initializeDateInput();
+    initializePublishingSettings();
     loadPostsList();
     setupEventListeners();
 });
+
+function initializePublishingSettings() {
+    const hostParts = window.location.hostname.split('.');
+    const inferredOwner = hostParts.length > 2 && hostParts.slice(-2).join('.') === 'github.io'
+        ? hostParts[0]
+        : 'Pravesh-Jamgade';
+    document.getElementById('github-owner').value = localStorage.getItem('github_owner') || inferredOwner;
+    document.getElementById('github-repo').value = localStorage.getItem('github_repo') || `${inferredOwner}.github.io`;
+    document.getElementById('github-branch').value = localStorage.getItem('github_branch') || 'main';
+    document.getElementById('github-token').value = sessionStorage.getItem('github_token') || '';
+}
 
 function initializeDateInput() {
     const dateInput = document.getElementById('post-date');
@@ -54,6 +66,7 @@ function hideEditor(event) {
     if (event) event.preventDefault();
     document.getElementById('editor-section').style.display = 'none';
     document.getElementById('preview-area').style.display = 'none';
+    document.getElementById('publish-status').textContent = '';
     resetForm();
     currentEditingId = null;
 }
@@ -114,7 +127,7 @@ function updatePreview() {
     document.getElementById('preview-content').innerHTML = html;
 }
 
-function savePost(event) {
+async function savePost(event) {
     event.preventDefault();
 
     const title = document.getElementById('post-title').value;
@@ -151,24 +164,100 @@ function savePost(event) {
 
     postsMeta[postMeta.id] = postMeta;
 
-    // Persist metadata to localStorage (sorted newest first)
+    // Build the two repository files that make up a post.
     const postsArray = Object.values(postsMeta).sort((a, b) => new Date(b.date) - new Date(a.date));
-    localStorage.setItem(POSTS_META_KEY, JSON.stringify(postsArray));
-
-    // Provide markdown file content for download
-    const markdownContent = `# ${title}\n\n${content}`;
-    downloadFile(markdownContent, filename);
-
-    // Also prepare an updated posts metadata JSON for the repository.
-    // This downloads a file named 'data-posts.json' — replace your repository's
-    // `data/posts.json` with this file (rename when saving) and commit.
+    const markdownContent = `---\ntitle: ${JSON.stringify(title)}\ndate: ${date}\ncategory: ${JSON.stringify(category)}\nexcerpt: ${JSON.stringify(excerpt)}\n---\n\n# ${title}\n\n${content}`;
     const postsJsonContent = JSON.stringify(postsArray, null, 2);
-    downloadFile(postsJsonContent, 'data-posts.json');
 
-    alert(`Post saved!\n\nFiles downloaded:\n- ${filename} (markdown)\n- data-posts.json (updated metadata)\n\nNext steps:\n1. Move '${filename}' into the 'posts' folder in your repo.\n2. Replace 'data/posts.json' with the downloaded 'data-posts.json' file (rename to data/posts.json).\n3. Commit and push to GitHub.`);
+    const publishButton = document.getElementById('publish-btn');
+    const status = document.getElementById('publish-status');
+    publishButton.disabled = true;
+    publishButton.textContent = 'Publishing…';
+    status.className = 'publish-status';
+    status.textContent = 'Creating a commit on GitHub…';
 
-    hideEditor();
-    loadPostsList();
+    try {
+        const settings = getPublishingSettings();
+        await publishToGitHub(settings, {
+            [`posts/${filename}`]: markdownContent,
+            'data/posts.json': postsJsonContent
+        }, currentEditingId ? `Update post: ${title}` : `Publish post: ${title}`);
+
+        localStorage.setItem(POSTS_META_KEY, JSON.stringify(postsArray));
+        status.className = 'publish-status success';
+        status.textContent = 'Published. GitHub Pages will update in a moment.';
+        currentEditingId = postMeta.id;
+        displayPostsList();
+    } catch (error) {
+        console.error('Publishing failed:', error);
+        status.className = 'publish-status error';
+        status.textContent = error.message;
+    } finally {
+        publishButton.disabled = false;
+        publishButton.textContent = 'Publish post';
+    }
+}
+
+function getPublishingSettings() {
+    const owner = document.getElementById('github-owner').value.trim();
+    const repo = document.getElementById('github-repo').value.trim();
+    const branch = document.getElementById('github-branch').value.trim();
+    const token = document.getElementById('github-token').value.trim();
+    if (!owner || !repo || !branch || !token) {
+        throw new Error('Open GitHub publishing settings and complete all four fields.');
+    }
+    localStorage.setItem('github_owner', owner);
+    localStorage.setItem('github_repo', repo);
+    localStorage.setItem('github_branch', branch);
+    sessionStorage.setItem('github_token', token);
+    return { owner, repo, branch, token };
+}
+
+async function githubRequest(settings, path, options = {}) {
+    const response = await fetch(`https://api.github.com${path}`, {
+        ...options,
+        headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${settings.token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+            ...(options.headers || {})
+        }
+    });
+    if (!response.ok) {
+        let detail = '';
+        try { detail = (await response.json()).message; } catch { detail = response.statusText; }
+        throw new Error(`GitHub could not publish (${response.status}): ${detail}`);
+    }
+    return response.status === 204 ? null : response.json();
+}
+
+// Use Git's tree API so the Markdown and index are published in one atomic commit.
+async function publishToGitHub(settings, files, message) {
+    const basePath = `/repos/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}`;
+    const ref = await githubRequest(settings, `${basePath}/git/ref/heads/${encodeURIComponent(settings.branch)}`);
+    const parentSha = ref.object.sha;
+    const parent = await githubRequest(settings, `${basePath}/git/commits/${parentSha}`);
+
+    const tree = await Promise.all(Object.entries(files).map(async ([path, content]) => {
+        const blob = await githubRequest(settings, `${basePath}/git/blobs`, {
+            method: 'POST',
+            body: JSON.stringify({ content, encoding: 'utf-8' })
+        });
+        return { path, mode: '100644', type: 'blob', sha: blob.sha };
+    }));
+
+    const nextTree = await githubRequest(settings, `${basePath}/git/trees`, {
+        method: 'POST',
+        body: JSON.stringify({ base_tree: parent.tree.sha, tree })
+    });
+    const commit = await githubRequest(settings, `${basePath}/git/commits`, {
+        method: 'POST',
+        body: JSON.stringify({ message, tree: nextTree.sha, parents: [parentSha] })
+    });
+    await githubRequest(settings, `${basePath}/git/refs/heads/${encodeURIComponent(settings.branch)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ sha: commit.sha, force: false })
+    });
 }
 
 function downloadFile(content, filename) {
@@ -195,8 +284,8 @@ function editPost(id) {
         fetch(`posts/${post.filename}`)
             .then(response => response.text())
             .then(content => {
-                // Remove title from markdown (it's already in the form)
-                const lines = content.split('\n');
+                // Remove generated front matter and title (they are already in the form).
+                const lines = content.replace(/^---\n[\s\S]*?\n---\n+/, '').split('\n');
                 if (lines[0].startsWith('# ')) {
                     lines.shift();
                     if (lines[0].trim() === '') lines.shift();
@@ -323,10 +412,9 @@ ADD POSTS:
 2. Fill in title, date, category, excerpt
 3. Write content in Markdown
 4. Use toolbar for quick formatting
-5. Click "Save Post"
-6. Download the markdown file
-7. Add the file to your 'posts' folder
-8. Commit and push to GitHub
+5. Open GitHub publishing settings and add a fine-grained token
+6. Click "Publish post"
+7. The post and index are committed to GitHub automatically
 
 EDIT POSTS:
 1. Click "Edit" on a post

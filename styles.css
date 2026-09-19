@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap');
 
-:root { --ink: #17211b; --muted: #6d766f; --paper: #f6f4ed; --line: #d8d9d1; --accent: #dd5f36; }
+:root { --ink: #171717; --muted: #737373; --paper: #fafaf8; --line: #deded9; --accent: #c84e2f; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { background: var(--paper); color: var(--ink); font-family: Manrope, Arial, sans-serif; font-size: 16px; line-height: 1.7; }
 a { color: inherit; }
-.container { display: flex; flex-direction: column; margin: 0 auto; max-width: 1120px; min-height: 100vh; padding: 0 40px; }
+.container { display: flex; flex-direction: column; margin: 0 auto; max-width: 920px; min-height: 100vh; padding: 0 40px; }
 .site-header { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 24px 0; }
 .site-name { font-size: 1.25rem; font-weight: 700; letter-spacing: -.04em; text-decoration: none; }
 .site-name span { color: var(--accent); }
@@ -13,22 +13,20 @@ nav { display: flex; gap: 28px; }
 nav a { color: var(--muted); font-size: .82rem; font-weight: 600; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
 nav a:hover, nav a.active { color: var(--ink); }
 main { flex: 1; }
-.intro { max-width: 800px; padding: 100px 0 92px; }
+.intro { max-width: 720px; padding: 112px 0 96px; }
 .eyebrow { color: var(--accent); font-family: "DM Mono", monospace; font-size: .74rem; font-weight: 500; letter-spacing: .12em; margin-bottom: 20px; text-transform: uppercase; }
-.intro h1 { font-size: clamp(2.7rem, 6vw, 5.2rem); font-weight: 500; letter-spacing: -.065em; line-height: 1.02; }
+.intro h1 { font-size: clamp(2.7rem, 7vw, 4.75rem); font-weight: 500; letter-spacing: -.06em; line-height: 1.02; }
 .intro > p:last-child { color: var(--muted); font-size: 1.05rem; margin-top: 28px; max-width: 610px; }
-.section-heading { align-items: baseline; border-bottom: 1px solid var(--ink); display: flex; justify-content: space-between; padding-bottom: 12px; }
+.section-heading { align-items: baseline; border-bottom: 1px solid var(--ink); display: flex; justify-content: space-between; padding-bottom: 10px; }
 .section-heading h2 { font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
 .section-heading span { color: var(--muted); font-family: "DM Mono", monospace; font-size: .7rem; text-transform: uppercase; }
 .blog-list { display: flex; flex-direction: column; }
 .blog-item { border-bottom: 1px solid var(--line); }
-.blog-line { align-items: center; display: grid; font-size: .9rem; gap: 24px; grid-template-columns: minmax(0, 1fr) 110px 155px 20px; min-height: 70px; text-decoration: none; }
+.blog-line { align-items: baseline; display: grid; font-size: .9rem; gap: 20px; grid-template-columns: minmax(0, 1fr) 96px 142px; padding: 17px 0; text-decoration: none; }
 .blog-line:hover .line-title { color: var(--accent); }
-.blog-line:hover .line-arrow { transform: translate(2px, -2px); }
-.line-title { font-size: 1.05rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; transition: color .2s ease; white-space: nowrap; }
+.line-title { font-size: 1rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; transition: color .2s ease; white-space: nowrap; }
 .line-category { color: var(--accent); font-family: "DM Mono", monospace; font-size: .7rem; text-transform: uppercase; }
 .blog-line time { color: var(--muted); font-family: "DM Mono", monospace; font-size: .72rem; }
-.line-arrow { text-align: right; transition: transform .2s ease; }
 .prose { margin: 80px auto 0; max-width: 760px; }
 .post-header { border-bottom: 1px solid var(--line); margin-bottom: 40px; padding-bottom: 28px; }
 .post-header h1, .about-section h1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 500; letter-spacing: -.05em; line-height: 1.08; }
@@ -45,8 +43,8 @@ footer { border-top: 1px solid var(--line); color: var(--muted); font-family: "D
 @media (max-width: 700px) {
   .container { padding: 0 20px; }
   .site-header { padding: 18px 0; }
-  .intro { padding: 72px 0 64px; }
-  .blog-line { gap: 12px; grid-template-columns: minmax(0, 1fr) auto 16px; min-height: 64px; }
+  .intro { padding: 76px 0 68px; }
+  .blog-line { gap: 12px; grid-template-columns: minmax(0, 1fr) auto; padding: 15px 0; }
   .line-category { display: none; }
   .blog-line time { font-size: 0; }
   .blog-line time::after { content: attr(datetime); font-size: .66rem; }

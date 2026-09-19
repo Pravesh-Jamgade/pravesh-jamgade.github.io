@@ -42,17 +42,16 @@ This makes it super easy to:
    - **Category** - Topic (e.g., "Research", "Methods")
    - **Excerpt** - Short summary for blog listing
    - **Content** - Write in Markdown (see formatting below)
-4. Click **"Save Post"**
-5. A markdown file will download
-6. Add this file to the `posts/` folder in your repository
-7. Commit and push to GitHub
+4. Open **GitHub publishing settings** and enter a fine-grained token with repository Contents read/write access
+5. Click **"Publish post"**
+6. The editor creates one commit containing both the Markdown post and updated post index; GitHub Pages deploys it automatically
 
 ### Edit a Post
 
 1. Go to **Admin**
 2. Click **"Edit"** on the post
 3. Make your changes
-4. Save and update the markdown file in `posts/`
+4. Click **"Publish post"** to commit the update
 
 ### Delete a Post
 
@@ -191,7 +190,7 @@ git push -u origin main
 - 📥 **Import Posts** - Restore posts from backup JSON
 - 📤 **Export Posts** - Backup all post metadata
 - 👁️ **Preview** - See how your post looks before saving
-- 💾 **Auto-Download** - Markdown files auto-download when you save
+- 🚀 **One-click Publishing** - Commit the Markdown file and post index directly from the editor
 
 ## Data Persistence
 
