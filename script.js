@@ -72,8 +72,8 @@ async function loadPost() {
                 <div class="post-header">
                     <h1>${post.title}</h1>
                     <div class="post-meta">
-                        <span>📅 ${formatDate(post.date)}</span>
-                        <span>🏷️ ${post.category}</span>
+                        <span>${formatDate(post.date)}</span>
+                        <span>Filed under: ${post.category}</span>
                     </div>
                 </div>
                 <div class="post-body">
@@ -177,6 +177,6 @@ function parseJSON(raw, fallback) {
 
 // Format date to readable format
 function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const [year, month, day] = dateString.split('-');
+    return `${year}.${month}.${day}`;
 }

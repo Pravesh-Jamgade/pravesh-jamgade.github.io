@@ -149,6 +149,8 @@ Edit `styles.css` to customize:
 
 ## Deploying to GitHub Pages
 
+For the complete first-time setup, day-to-day publishing workflow, browser editor instructions, custom domain notes, and troubleshooting, see **[PUBLISHING.md](PUBLISHING.md)**.
+
 ### Simple Setup
 
 1. Create a GitHub repository named `username.github.io`
