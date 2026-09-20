@@ -1,0 +1,10 @@
+<header>
+  <p class="site-title">{{ site.title }}</p>
+  <nav aria-label="Main navigation">
+    <a href="{{ '/' | relative_url }}"{% if page.nav == 'posts' %} aria-current="page"{% endif %}>Posts</a>
+    <a href="{{ '/about.html' | relative_url }}"{% if page.nav == 'about' %} aria-current="page"{% endif %}>About</a>
+    <a href="{{ '/contact.html' | relative_url }}"{% if page.nav == 'contact' %} aria-current="page"{% endif %}>Contact</a>
+  </nav>
+</header>
+
+<hr>
