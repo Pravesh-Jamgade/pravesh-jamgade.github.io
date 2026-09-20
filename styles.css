@@ -16,8 +16,8 @@ a { color: #0000ee; }
 a:visited { color: #551a8b; }
 header { text-align: left; }
 footer { text-align: center; }
-.site-title { font-size: 1.2em; font-weight: bold; margin: 0 0 16px; }
-nav { display: flex; justify-content: space-between; margin: 16px 0; width: 100%; }
+.site-title { font-size: 1.2em; font-weight: bold; margin: 0 0 12px; }
+nav { display: flex; gap: 24px; margin: 12px 0; }
 nav a { margin: 0; }
 nav a[aria-current="page"] { font-weight: bold; }
 main { flex: 1; }
@@ -26,6 +26,8 @@ h2 { font-size: 1.5em; }
 h3 { font-size: 1.2em; }
 time { font-style: italic; }
 article { scroll-margin-top: 16px; }
+.post-list { padding-left: 24px; }
+.post-list li + li { margin-top: 6px; }
 
 @media (max-width: 520px) {
   body { font-size: 17px; padding: 12px; }

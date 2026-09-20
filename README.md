@@ -1,17 +1,33 @@
 # Pravesh Jamgade's Website
 
-An intentionally simple personal website inspired by early personal pages from the 1980s and 1990s.
+An intentionally simple personal website powered by Jekyll, the static-site generator built into GitHub Pages. Shared layouts format every page and post consistently, and the posts page is generated automatically.
 
-The site uses a separate static HTML file for each navigation tab and each post. Shared styles live in [`styles.css`](styles.css). There is no JavaScript, build step, database, framework, image, or external dependency.
+## Writing a post
 
-## Editing
+Create a plain-text Markdown file in `_posts/`. Its name must follow `YYYY-MM-DD-short-title.md`. Start with this small header, then write normally beneath it:
 
-Edit the relevant HTML page directly. The main pages live in the repository root, while individual articles live in [`posts/`](posts/). Update `styles.css` for site-wide visual changes.
+```text
+---
+layout: post
+title: "The title readers will see"
+---
+
+Write the post here. Leave a blank line between paragraphs.
+
+## A section heading
+
+More text here. Markdown links, lists, and emphasis also work when you need them.
+```
+
+That is all: after you push the file, GitHub Pages automatically formats the post, adds the site header and footer, and places it in the posts list. You do not need to edit HTML or update the posts page.
+
+To keep a work in progress off the published site, put it in `_drafts/` instead. Move it to `_posts/` and add the date to its filename when it is ready.
 
 ## Previewing
 
-Open `index.html` in a web browser to see the posts landing page, or serve the repository with any basic static HTTP server:
+GitHub Pages builds the site automatically after a push. To preview the same build locally, install Ruby, then run:
 
 ```sh
-python3 -m http.server 8000
+bundle install
+bundle exec jekyll serve
 ```
