@@ -29,5 +29,10 @@ GitHub Pages builds the site automatically after a push. To preview the same bui
 
 ```sh
 bundle install
-bundle exec jekyll serve
+bundle exec jekyll serve --host 0.0.0.0 --port 8000
 ```
+
+Open `http://localhost:8000` after Jekyll reports that the server is ready. Do
+not preview the source directory with a plain static-file server: Jekyll must
+first process the front matter, layouts, and Liquid tags such as
+`{% for post in site.posts %}`.
