@@ -1,4 +1,4 @@
-# Pravesh Jamgade's Home Page
+# Pravesh Jamgade's Website
 
 An intentionally simple personal website inspired by early personal pages from the 1980s and 1990s.
 
@@ -10,7 +10,7 @@ Edit the relevant HTML page directly. The main pages live in the repository root
 
 ## Previewing
 
-Open `index.html` in a web browser, or serve the repository with any basic static HTTP server:
+Open `index.html` in a web browser to see the posts landing page, or serve the repository with any basic static HTTP server:
 
 ```sh
 python3 -m http.server 8000
