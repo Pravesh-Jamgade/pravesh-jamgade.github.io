@@ -4,132 +4,35 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pravesh Jamgade's Home Page</title>
-  <style>
-    body {
-      background: white;
-      color: black;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 18px;
-      line-height: 1.4;
-      margin: 24px auto;
-      max-width: 760px;
-      padding: 0 16px;
-    }
-
-    a { color: #0000ee; }
-    a:visited { color: #551a8b; }
-    header, footer { text-align: center; }
-    nav { margin: 16px 0; }
-    nav a { margin: 0 8px; }
-    h1 { font-size: 2em; margin-bottom: 0; }
-    h2 { font-size: 1.5em; }
-    h3 { font-size: 1.2em; }
-    time { font-style: italic; }
-    article { scroll-margin-top: 16px; }
-
-    @media (max-width: 520px) {
-      body { font-size: 17px; margin-top: 12px; }
-      nav a { display: inline-block; margin: 4px 6px; }
-      h1 { font-size: 1.7em; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header id="top">
+  <header>
     <h1>Pravesh Jamgade</h1>
     <p>Notes on computer architecture, research, and the mind.</p>
     <nav aria-label="Main navigation">
-      <a href="#writing">Writing</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="posts.html">Posts</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
   <hr>
 
   <main>
-    <section id="writing">
-      <h2>Writing</h2>
+    <section>
+      <h2>Welcome</h2>
+      <p>This is my place to document the research, ideas, questions, and experiences that shape how I think.</p>
+      <p>Read my latest notes on <a href="posts.html">computer architecture and the mind</a>, or learn more <a href="about.html">about me</a>.</p>
+    </section>
+
+    <section>
+      <h2>Latest posts</h2>
       <ul>
-        <li><a href="#phantom-hits">Phantom Hits &amp; Transition States</a> — <time datetime="2026-05-30">May 30, 2026</time></li>
-        <li><a href="#mindfulness">Mindfulness Learning and the Brain</a> — <time datetime="2026-05-02">May 2, 2026</time></li>
+        <li><a href="posts/phantom-hits.html">Phantom Hits &amp; Transition States</a> — <time datetime="2026-05-30">May 30, 2026</time></li>
+        <li><a href="posts/mindfulness.html">Mindfulness Learning and the Brain</a> — <time datetime="2026-05-02">May 2, 2026</time></li>
       </ul>
-    </section>
-
-    <hr>
-
-    <article id="phantom-hits">
-      <h2>Phantom Hits &amp; Transition States</h2>
-      <p><time datetime="2026-05-30">May 30, 2026</time></p>
-
-      <p>I am using a Hermes-like architecture to predict off-chip page walk accesses. The architecture predicts whether a page walk will go off-chip in search of the next page table address. Two packets are sent: one regular (<abbr title="regular">reg</abbr>) and one special (<abbr title="DRAM prefetch">ddrp</abbr>) packet.</p>
-
-      <p>A page table entry holding a page address is 8 bytes, so a 64-byte cache block holds eight entries. A page is allocated by the page fault mechanism and its address is stored in another page that is part of the page table. When a requested page has just been allocated, the cache block holding its page table entry has one valid 8-byte entry while the remaining seven entries are invalid.</p>
-
-      <p>The next access to the same cache block is a cache hit because the tag matches, but it may request one of the seven entries that has not yet been allocated. The hardware reads the entry and brings it to the MMU during the page walk. The MMU checks the valid bit in the entry, determines that it is invalid, and sends a page fault signal to the operating system. The operating system then allocates a page and sends the missing 8-byte entry rather than transferring the whole 64-byte block to the cache.</p>
-
-      <p>In my simulator I do not carry the block-level information with a page table request. Instead, I use a central structure that looks up the page number, block ID, and entry index to satisfy cache read requests for translation blocks. Each 8-byte entry has its page-fault flag set to 1 by default. When the fault is read, I allocate the page, update the entry with the page address, and reset the flag to 0.</p>
-
-      <p>While modeling regular and ddrp requests, I found that the ddrp request, which moves ahead of the regular request, resets the page-fault flag to 0. Because the block in the cache shares the central structure, that change is immediately reflected there. The regular request should see page-fault=1, but instead sees the value reset by ddrp. This inconsistency increases the false-positive rate of the predictor and lowers its precision.</p>
-
-      <p>The problem became clear when I built an oracle predictor that knows whether an access will go off-chip. It looks through all caches, and if the data is absent, sends a ddrp request to the DRAM controller to prefetch the page-table block. The oracle correctly predicts an off-chip access, but the ddrp packet resets page-fault=0. The regular packet then sees both a cached block and a valid entry, reports a hit instead of a forced miss, and incorrectly trains the predictor as a false positive.</p>
-
-      <p>To solve this problem, I introduced a transition state (<abbr title="transition state">TS</abbr>) for the page-fault (<abbr title="page fault">PF</abbr>) flag.</p>
-
-      <h3>Rules at DRAM</h3>
-      <ol>
-        <li>PF=1 and ddrp packet: PF becomes TS.</li>
-        <li>PF=1 and regular packet: PF becomes 0.</li>
-        <li>PF=0 and ddrp or regular packet: no change.</li>
-        <li>PF=TS and ddrp packet: no change.</li>
-        <li>PF=TS and regular packet: PF becomes 0.</li>
-      </ol>
-
-      <p><a href="#top">Back to top</a></p>
-    </article>
-
-    <hr>
-
-    <article id="mindfulness">
-      <h2>Mindfulness Learning and the Brain</h2>
-      <p><time datetime="2026-05-02">May 2, 2026</time></p>
-      <p><strong>Author:</strong> Guy Claxton, University of Bristol, UK</p>
-
-      <p>This is an attempt to sketch an approach to the complex phenomenon called mindfulness—one that does justice to its complexity and depth while also offering a way to think about it in evolutionary and neural terms. It asks where mindfulness came from, what kind of consciousness it is, what it was for before being adopted by spiritual and therapeutic traditions, and how brains produce it.</p>
-
-      <p>The central suggestion is that human brains developed, for good evolutionary reasons, a facility for imaginative empathy and “as-if” identification. Mindfulness draws on this facility to create what may be a uniquely human form of learning—or, rather, unlearning.</p>
-
-      <p><strong>Keywords:</strong> mindfulness, learning, consciousness, brain.</p>
-
-      <blockquote>
-        <p>The highest activities of consciousness have their origins in physical occurrences in the brain, just as melodies are expressed through individual notes.</p>
-      </blockquote>
-
-      <p>The analogy suggests that consciousness may be composed of complex patterns of neural activity, just as a melody is composed of notes that may not be especially moving on their own.</p>
-
-      <p>The paper approaches mindfulness through cognitive neuroscience. It begins with a set of propositions that form the framework for the discussion. Although these ideas are common in scientific circles, not everyone accepts them as self-evident. Some people, for example, dispute that consciousness is associated exclusively with brains of a certain kind and instead regard it as a primary substance of the universe.</p>
-
-      <p>Rather than trying to settle those philosophical disagreements, the paper states its assumptions clearly and explores what can be seen from the vantage point they create. The value of the framework ultimately rests on whether it leads in interesting directions.</p>
-
-      <p><a href="#top">Back to top</a></p>
-    </article>
-
-    <hr>
-
-    <section id="about">
-      <h2>About</h2>
-      <p>Hi, I’m Pravesh. I am a researcher working in computer architecture, with a particular focus on virtual memory and address translation. Much of my academic curiosity revolves around how modern systems move, translate, and manage data efficiently beneath the surface of computation.</p>
-
-      <p>This page is a place to document my research journey and the ideas, questions, and experiences that shape how I think. Outside research, I enjoy cycling, running, trekking, chess, stories, philosophy, mindfulness, consciousness, and meditation.</p>
-
-      <p>I hope to explore both the technical and the personal: the architecture of machines and the architecture of the mind.</p>
-    </section>
-
-    <hr>
-
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Email: <a href="mailto:praveshjamgade@gmail.com">praveshjamgade@gmail.com</a></p>
     </section>
   </main>
 
@@ -137,7 +40,6 @@
 
   <footer>
     <p>&copy; 2026 Pravesh Jamgade</p>
-    <p><a href="#top">Back to top</a></p>
   </footer>
 </body>
 </html>
