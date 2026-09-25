@@ -33,7 +33,7 @@ Add another entry to `_data/photos.yml` with the image URL, accessible descripti
   caption: A short caption for the photo.
 ```
 
-The gallery automatically places each new photo into the next available slot, with three photos per row. Additional rows continue down the page and are available through normal page scrolling.
+The gallery automatically places each new photo into the next available slot, with three photos per row. Photos retain their original aspect ratio rather than being stretched or cropped. Additional rows continue down the page and are available through normal page scrolling.
 
 The `src` value must point directly to an image, rather than to a page that
 displays one. For a publicly shared Google Drive photo, copy the file ID from
@@ -45,6 +45,23 @@ in `https://drive.google.com/file/d/FILE_ID/view` can be used like this:
   alt: A description of the photo
   caption: A short caption for the photo.
 ```
+
+A Google Photos sharing URL such as
+`https://photos.app.goo.gl/DyjTKsxD9Njm9Jxw7` is a link to a web page, not an
+image URL. Do not put its sharing token into a URL such as
+`https://photos.app.goo.gl/thumbnail?id=...`; Google Photos does not provide
+that thumbnail endpoint, so the browser cannot reliably display it in the
+gallery. Instead, download the photo, add it to `assets/images/`, and reference
+the checked-in file:
+
+```yaml
+- src: /assets/images/tosh-kasol.jpg
+  alt: Tosh, Kasol
+  caption: Tosh, Kasol
+```
+
+Using a local image also prevents the gallery from breaking if an external
+provider changes or expires its generated image URL.
 
 ## Previewing
 

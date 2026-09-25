@@ -58,7 +58,7 @@ article { scroll-margin-top: 16px; }
   position: relative;
   width: 100%;
 }
-.photo-button img { aspect-ratio: 4 / 5; display: block; object-fit: cover; transition: transform .5s ease; width: 100%; }
+.photo-button img { display: block; height: auto; transition: transform .5s ease; width: 100%; }
 .photo-button:hover img, .photo-button:focus-visible img { transform: scale(1.025); }
 .photo-button:focus-visible { outline: 3px solid #0000ee; outline-offset: 4px; }
 .view-photo {
