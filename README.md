@@ -33,7 +33,7 @@ Add another entry to `_data/photos.yml` with the image URL, accessible descripti
   caption: A short caption for the photo.
 ```
 
-The gallery automatically places each new photo into the next available slot, with three photos per row. Additional rows continue down the page and are available through normal page scrolling.
+The gallery automatically places each new photo into the next available slot, with three photos per row. Photos retain their original aspect ratio rather than being stretched or cropped. Additional rows continue down the page and are available through normal page scrolling.
 
 The `src` value must point directly to an image, rather than to a page that
 displays one. For a publicly shared Google Drive photo, copy the file ID from
