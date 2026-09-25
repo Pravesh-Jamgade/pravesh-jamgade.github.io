@@ -19,7 +19,7 @@ Write the post here. Leave a blank line between paragraphs.
 More text here. Markdown links, lists, and emphasis also work when you need them.
 ```
 
-That is all: after you push the file, GitHub Pages automatically formats the post, adds the site header and footer, and places it in the posts list. You do not need to edit HTML or update the posts page.
+That is all: after you push the file, GitHub Pages automatically formats the post, adds a link back to all posts and the site footer, and places it in the posts list. You do not need to edit HTML or update the posts page.
 
 To keep a work in progress off the published site, put it in `_drafts/` instead. Move it to `_posts/` and add the date to its filename when it is ready.
 
