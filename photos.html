@@ -1,0 +1,53 @@
+---
+layout: default
+title: Photos
+nav: photos
+---
+<section class="photo-page" aria-labelledby="photo-page-title">
+  <header class="photo-page-intro">
+    <p class="eyebrow">Selected frames</p>
+    <h1 id="photo-page-title">Photo journal</h1>
+    <p>A small collection of places and moments worth remembering.</p>
+  </header>
+
+  <div class="photo-grid">
+    {% for photo in site.data.photos %}
+    <figure class="photo-card">
+      <button class="photo-button" type="button" aria-label="View {{ photo.alt | escape }} full screen">
+        <img src="{{ photo.src | escape }}" alt="{{ photo.alt | escape }}" width="1600" height="1200" loading="lazy">
+        <span class="view-photo" aria-hidden="true">View photo <span>↗</span></span>
+      </button>
+      <figcaption>{{ photo.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+
+<dialog class="lightbox" aria-label="Full-screen photo viewer">
+  <button class="lightbox-close" type="button" aria-label="Close full-screen photo">Close <span aria-hidden="true">×</span></button>
+  <figure>
+    <img src="" alt="">
+    <figcaption></figcaption>
+  </figure>
+</dialog>
+
+<script>
+  const lightbox = document.querySelector('.lightbox');
+  const lightboxImage = lightbox.querySelector('img');
+  const lightboxCaption = lightbox.querySelector('figcaption');
+
+  document.querySelectorAll('.photo-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const image = button.querySelector('img');
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt;
+      lightboxCaption.textContent = button.nextElementSibling.textContent;
+      lightbox.showModal();
+    });
+  });
+
+  lightbox.querySelector('.lightbox-close').addEventListener('click', () => lightbox.close());
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox) lightbox.close();
+  });
+</script>

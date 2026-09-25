@@ -19,9 +19,21 @@ Write the post here. Leave a blank line between paragraphs.
 More text here. Markdown links, lists, and emphasis also work when you need them.
 ```
 
-That is all: after you push the file, GitHub Pages automatically formats the post, adds the site header and footer, and places it in the posts list. You do not need to edit HTML or update the posts page.
+That is all: after you push the file, GitHub Pages automatically formats the post, adds a link back to all posts and the site footer, and places it in the posts list. You do not need to edit HTML or update the posts page.
 
 To keep a work in progress off the published site, put it in `_drafts/` instead. Move it to `_posts/` and add the date to its filename when it is ready.
+
+## Adding a photo
+
+Add another entry to `_data/photos.yml` with the image URL, accessible description, and one-line caption:
+
+```yaml
+- src: /assets/images/example.jpg
+  alt: A description of the photo
+  caption: A short caption for the photo.
+```
+
+The gallery automatically places each new photo into the next available slot, with three photos per row. Additional rows continue down the page and are available through normal page scrolling.
 
 ## Previewing
 
@@ -29,10 +41,19 @@ GitHub Pages builds the site automatically after a push. To preview the same bui
 
 ```sh
 bundle install
-bundle exec jekyll serve --host 0.0.0.0 --port 8000
+./bin/serve
 ```
 
-Open `http://localhost:8000` after Jekyll reports that the server is ready. Do
-not preview the source directory with a plain static-file server: Jekyll must
-first process the front matter, layouts, and Liquid tags such as
-`{% for post in site.posts %}`.
+Then open <http://localhost:8000>. The preview binds to `0.0.0.0`, so it also
+works in a container or remote development environment. Set `PORT` or
+`JEKYLL_HOST` to override either default:
+
+```sh
+PORT=4000 JEKYLL_HOST=127.0.0.1 ./bin/serve
+```
+
+Do not serve the repository root with a plain static server such as
+`python -m http.server`. The source files contain Jekyll front matter and
+Liquid expressions. A plain server sends those instructions to the browser
+without rendering them, which makes text such as `layout: default` and Liquid
+loop instructions appear on the page.
