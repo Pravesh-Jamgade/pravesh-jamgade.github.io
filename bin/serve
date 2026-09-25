@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+set -eu
+
+# Render Jekyll and Liquid before serving the source files. Binding to all
+# interfaces also makes the preview available from containers.
+exec bundle exec jekyll serve \
+  --host "${JEKYLL_HOST:-0.0.0.0}" \
+  --port "${PORT:-8000}" \
+  "$@"
