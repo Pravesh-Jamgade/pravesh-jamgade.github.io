@@ -29,5 +29,19 @@ GitHub Pages builds the site automatically after a push. To preview the same bui
 
 ```sh
 bundle install
-bundle exec jekyll serve
+./bin/serve
 ```
+
+Then open <http://localhost:8000>. The preview binds to `0.0.0.0`, so it also
+works in a container or remote development environment. Set `PORT` or
+`JEKYLL_HOST` to override either default:
+
+```sh
+PORT=4000 JEKYLL_HOST=127.0.0.1 ./bin/serve
+```
+
+Do not serve the repository root with a plain static server such as
+`python -m http.server`. The source files contain Jekyll front matter and
+Liquid expressions. A plain server sends those instructions to the browser
+without rendering them, which makes text such as `layout: default` and Liquid
+loop instructions appear on the page.
