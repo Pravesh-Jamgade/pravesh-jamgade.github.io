@@ -35,6 +35,17 @@ Add another entry to `_data/photos.yml` with the image URL, accessible descripti
 
 The gallery automatically places each new photo into the next available slot, with three photos per row. Additional rows continue down the page and are available through normal page scrolling.
 
+The `src` value must point directly to an image, rather than to a page that
+displays one. For a publicly shared Google Drive photo, copy the file ID from
+its sharing URL and use Drive's thumbnail endpoint. For example, the file ID
+in `https://drive.google.com/file/d/FILE_ID/view` can be used like this:
+
+```yaml
+- src: https://drive.google.com/thumbnail?id=FILE_ID&sz=w1600
+  alt: A description of the photo
+  caption: A short caption for the photo.
+```
+
 ## Previewing
 
 GitHub Pages builds the site automatically after a push. To preview the same build locally, install Ruby, then run:
