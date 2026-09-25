@@ -23,6 +23,18 @@ That is all: after you push the file, GitHub Pages automatically formats the pos
 
 To keep a work in progress off the published site, put it in `_drafts/` instead. Move it to `_posts/` and add the date to its filename when it is ready.
 
+## Adding a photo
+
+Add another entry to `_data/photos.yml` with the image URL, accessible description, and one-line caption:
+
+```yaml
+- src: /assets/images/example.jpg
+  alt: A description of the photo
+  caption: A short caption for the photo.
+```
+
+The gallery automatically places each new photo into the next available slot, with three photos per row. Additional rows continue down the page and are available through normal page scrolling.
+
 ## Previewing
 
 GitHub Pages builds the site automatically after a push. To preview the same build locally, install Ruby, then run:
